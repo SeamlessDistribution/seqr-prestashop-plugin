@@ -44,9 +44,9 @@ Plugin provide possibility for shop clients to select SEQR as payment method, an
 
 ## Installation & Configuration ##
 
-Plugin can be installed via installation in Module Manager or by copping all plugin files to the "modules" directory.
+Plugin can be installed via installation in administration or by copping all plugin files to the "modules" directory.
 
-### Installation using the Module Manager ###
+### Installation using administration page ###
 
 1. Please download a build package from: [builds](build/).
 2. Open Prestashop administration page, go to "Modules" and on the top right corner choose "Add a new module".
@@ -73,21 +73,18 @@ Plugin based on javascript plugin for SEQR integration.
 Please check it for understanding how work web component http://github.com/SeamlessDistribution/seqr-webshop-plugin.
 For more information about SEQR API please check http://developer.seqr.com/merchant/webshop/
 
-##### Plugin categories: #####
-* /app/code/community/Seamless/SEQR/
-/app/design/frontend/base/default/layout/seqr.xml
-* /app/design/frontend/base/default/template/seqr/
-* /app/etc/modules/Seamless_SEQR.xml
-* /js/seqr/
-* /skin/frontend/base/default/css/seqr/seqr.css
+### Plugin directories: ###
+* controllers
+* css
+* img
+* js
+* lib
+* views
+* seqr.php
 
-#### Main php classes ####
-1. Seamless_SEQR_PaymentController
-(/app/code/community/Seamless/SEQR/controllers/PaymentController.php)
-Provide actions and pages for SEQR payment proceed.
-2. Seamless_SEQR_Model_Invoice
-(/app/code/community/Seamless/SEQR/Model/Invoice.php)
-Main domain object providing logic of plugin. Make calls to API, caching responses and run additional logic.
-3. Seamless_SEQR_Model_Api
-(/app/code/community/Seamless/SEQR/Model/Api.php)
-Communication API for work with SEQR SOA Service. Contains requests structure and remote API calls.
+### Main php classes ###
+* seqr/seqr.php - an entry point of the module, provides information about module, administration form, installation and remove module procedure.
+* seqr/impl/prestashop/PsConfig.php - defines configuration for the Prestashop platform, installation, uninstall definitions.
+* seqr/impl/prestashop/PsFactory.php - defines conversion from Prestashop order to the unified invoice representation.
+* seqr/impl/prestashop/PsSeqrService.php - defines logic, sens request to the SEQR system via provided API (seqr/lib/api/SeqrApi.php)
+
