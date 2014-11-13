@@ -1,0 +1,2 @@
+seqr-prestashop-plugin
+======================
