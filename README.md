@@ -19,8 +19,9 @@ Learn more about SEQR on www.seqr.com
 * 1.5
 * 1.4
 
-## Dowload ##
-* Version 1.0: [Seamless_SEQR-1.0.1.tgz](https://github.com/SeamlessDistribution/seqr-magento-plugin/raw/master/builds/Seamless_SEQR-1.0.1.tgz)
+## Dowloads ##
+* Version 1.0: [seqr-ps-plugin-1.0.zip](build/seqr-ps-plugin-1.0.zip)
+* all versions: [builds](build/)
 
 # Plugin #
 Plugin provide possibility for shop clients to select SEQR as payment method, and after order placement pay it via scanning QR code (or directly from your mobile device).
