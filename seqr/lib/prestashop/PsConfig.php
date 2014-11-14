@@ -34,13 +34,7 @@ final class PsConfig extends SeqrCoreConfig {
     public function install()
     {
         return Configuration::updateValue(SeqrConfig::SEQR_WSDL, SeqrConfig::SEQR_WSDL_DEMO)
-        && Configuration::updateValue(SeqrConfig::SEQR_MODULE_INSTALLED, SeqrConfig::SEQR_MODULE_INSTALLED)
         && Configuration::updateValue(SeqrConfig::SEQR_PAYMENT_TIMEOUT, 120);
-    }
-
-    function isInstalled()
-    {
-        return SeqrConfig::SEQR_MODULE_INSTALLED == Configuration::get(SeqrConfig::SEQR_MODULE_INSTALLED);
     }
 
     public function uninstall()
@@ -49,8 +43,7 @@ final class PsConfig extends SeqrCoreConfig {
             && Configuration::deleteByName(SeqrConfig::SEQR_USER_ID)
             && Configuration::deleteByName(SeqrConfig::SEQR_TERMINAL_ID)
             && Configuration::deleteByName(SeqrConfig::SEQR_TERMINAL_PASS)
-            && Configuration::deleteByName(SeqrConfig::SEQR_PAYMENT_TIMEOUT)
-            && Configuration::deleteByName(SeqrConfig::SEQR_MODULE_INSTALLED);
+            && Configuration::deleteByName(SeqrConfig::SEQR_PAYMENT_TIMEOUT);
     }
 
     public function getSeqrModuleUrl()
