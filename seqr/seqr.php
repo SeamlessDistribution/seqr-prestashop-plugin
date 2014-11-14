@@ -232,6 +232,7 @@ class Seqr extends PaymentModuleCore {
         $this->smarty->assign(array(
             'this_path' => $this->_path,
             'this_path_bw' => $this->_path,
+            'shopVersion' => $this->getShopVersion(),
             'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'module/' . $this->name . '/'
         ));
         return $this->display(__FILE__, 'seqr_payment_option.tpl');
@@ -244,8 +245,33 @@ class Seqr extends PaymentModuleCore {
      */
     public function hookDisplayHeader($params) {
 
-        $this->context->controller->addCss($this->_path . 'css/seqr.css');
+        $this->context->controller->addCss($this->_path . $this->getForVersion('css/seqr.css', dirname(__FILE__)));
         $this->context->controller->addJS($this->_path . 'js/seqr.js');
+    }
+
+    private function getForVersion($file, $path = "") {
+
+        $version = $this->getShopVersion();
+
+        if ($file) {
+            $name = substr($file, 0, strpos($file, "."));
+            $ext = substr($file, strpos($file, ".") + 1, strlen($file));
+
+            $fileForVer = $name . $version . "." . $ext;
+            $filePath = $path == "" ? $fileForVer : $path . '/' . $fileForVer;
+            if (file_exists($filePath)) {
+                return $fileForVer;
+            }
+
+            return $file;
+        }
+        return null;
+    }
+
+    public function getShopVersion() {
+
+        $version = _PS_VERSION_;
+        return substr($version, 0, 1) . substr($version, 2, 1);
     }
 }
 

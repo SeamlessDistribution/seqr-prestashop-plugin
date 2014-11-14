@@ -201,7 +201,7 @@ abstract class SeqrService {
      * to the confirmation page.
      * @return mixed
      */
-    protected abstract  function getBackUrl();
+    public abstract  function getBackUrl();
 
     /**
      * Override this function to add notification functionality.

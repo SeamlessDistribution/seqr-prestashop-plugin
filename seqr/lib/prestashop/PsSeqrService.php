@@ -43,19 +43,12 @@ class PsSeqrService extends SeqrService {
     public function getCheckStatusUrl() {
         return urlencode(
             Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__
-            . 'module/seqr/checkstatus?orderId=' . $this->order->getId()
+            . '/?fc=module&module=seqr&controller=checkstatus&orderId=' . $this->order->getId()
         );
     }
 
-    /**
-     * Back url used on the mobile devices to redirect user
-     * to the confirmation page.
-     * @return mixed
-     */
-    protected function getBackUrl() {
+    public function getBackUrl() {
         return Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__
-            . 'module/seqr/confirmation?orderId=' . $this->order->getId();
+            . '/?fc=module&module=seqr&controller=confirmation&orderId=' . $this->order->getId();
     }
-
-
 }

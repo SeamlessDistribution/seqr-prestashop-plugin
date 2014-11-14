@@ -1,5 +1,4 @@
-{capture name=path}{l s='SEQR payment' mod='seqr'}{/capture}
-{*{include file="$tpl_dir./breadcrumb.tpl"}*}
+{include file="$breadcrumb"}
 
 <h1 class="page-heading">{l s='SEQR payment code' mod='seqr'}</h1>
 
@@ -11,6 +10,7 @@
 <script type="text/javascript">
     (function () {
         window.seqr.id = "{$orderId}";
+        window.seqr.backUrl = "{$backUrl}";
     }());
 </script>
 
