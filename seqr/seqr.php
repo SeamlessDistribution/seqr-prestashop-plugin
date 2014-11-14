@@ -5,17 +5,21 @@ include_once('lib/prestashop/PsConfig.php');
 if (!defined('_PS_VERSION_'))
     exit;
 
+/**
+ * The entry point of the SEQR payment module.
+ */
 class Seqr extends PaymentModuleCore {
     public $config = null;
 
     public function __construct() {
+
         $this->name = 'seqr';
         $this->tab = 'payments_gateways';
         $this->version = '1.0.0';
         $this->author = 'SEQR Team';
         $this->need_instance = 1;
         $this->is_configurable = 1;
-        $this->ps_versions_compliancy = array('min' => '1.6', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = array('min' => '1.4', 'max' => _PS_VERSION_);
         $this->bootstrap = true;
 
         parent::__construct();
@@ -29,10 +33,14 @@ class Seqr extends PaymentModuleCore {
         $this->config->load();
     }
 
+    /**
+     * Installs the SEQR module.
+     * @return bool
+     */
     public function install() {
+
         if (!parent::install()
             || !$this->registerHook('payment')
-            || !$this->registerHook('paymentReturn')
             || !$this->registerHook('header')
             || !$this->config->install()
         ) {
@@ -41,6 +49,10 @@ class Seqr extends PaymentModuleCore {
         return true;
     }
 
+    /**
+     * Uninstall the SEQR module.
+     * @return bool
+     */
     public function uninstall() {
         if (
             !$this->config->uninstall()
@@ -51,6 +63,10 @@ class Seqr extends PaymentModuleCore {
         return true;
     }
 
+    /**
+     * Prints configuration page in the admin module.
+     * @return string
+     */
     public function getContent() {
 
         $output = null;
@@ -61,14 +77,14 @@ class Seqr extends PaymentModuleCore {
             $user = strval(Tools::getValue(SeqrConfig::SEQR_USER_ID));
             $terminalId = strval(Tools::getValue(SeqrConfig::SEQR_TERMINAL_ID));
             $terminalPass = strval(Tools::getValue(SeqrConfig::SEQR_TERMINAL_PASS));
-            $mode = strval(Tools::getValue(SeqrConfig::SEQR_MODE));
+            $wsdl = strval(Tools::getValue(SeqrConfig::SEQR_WSDL));
             $timeout = strval(Tools::getValue(SeqrConfig::SEQR_PAYMENT_TIMEOUT));
 
             $valid = true;
             $valid = $this->validateValue($user, "Invalid user id", $output);
             $valid = $this->validateValue($terminalId, "Invalid terminal id", $output) && $valid;
             $valid = $this->validateValue($terminalPass, "Invalid terminal password", $output) && $valid;
-            $valid = $this->validateValue($mode, "SEQR mode is not set", $output) && $valid;
+            $valid = $this->validateValue($wsdl, "SEQR mode is not set", $output) && $valid;
             $valid = $this->validateValue($timeout, "Payment timeout is not set", $output) && $valid;
 
             if ($valid) {
@@ -77,7 +93,7 @@ class Seqr extends PaymentModuleCore {
                     SeqrConfig::SEQR_USER_ID => $user,
                     SeqrConfig::SEQR_TERMINAL_ID => $terminalId,
                     SeqrConfig::SEQR_TERMINAL_PASS => $terminalPass,
-                    SeqrConfig::SEQR_MODE => $mode,
+                    SeqrConfig::SEQR_WSDL => $wsdl,
                     SeqrConfig::SEQR_PAYMENT_TIMEOUT => $timeout
                 ));
                 $newConfig->save();
@@ -92,6 +108,10 @@ class Seqr extends PaymentModuleCore {
         return $output . $this->displayForm();
     }
 
+    /**
+     * Configuration form definition.
+     * @return mixed
+     */
     public function displayForm() {
         // Get default language
         $default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
@@ -121,21 +141,15 @@ class Seqr extends PaymentModuleCore {
                     'required' => true
                 ),
                 array(
-                    'type' => 'select',
-                    'label' => $this->l('SEQR Server'),
-                    'name' => SeqrConfig::SEQR_MODE,
-                    'required' => true,
-                    'default_value' => $this->config->getMode(),
-                    'options' => array(
-                        'query' => $this->getModes(),
-                        'id' => 'id',
-                        'name' => 'name',
-                    )
-                ),
-                array(
                     'type' => 'text',
                     'label' => $this->l('Payment timeout (in seconds)'),
                     'name' => SeqrConfig::SEQR_PAYMENT_TIMEOUT,
+                    'required' => true
+                ),
+                array(
+                    'type' => 'text',
+                    'label' => $this->l('SEQR WSDL url'),
+                    'name' => SeqrConfig::SEQR_WSDL,
                     'required' => true
                 )
             ),
@@ -178,25 +192,19 @@ class Seqr extends PaymentModuleCore {
         $helper->fields_value[SeqrConfig::SEQR_USER_ID] = $this->config->getUserId();
         $helper->fields_value[SeqrConfig::SEQR_TERMINAL_ID] = $this->config->getTerminalId();
         $helper->fields_value[SeqrConfig::SEQR_TERMINAL_PASS] = $this->config->getTerminalPass();
-        $helper->fields_value[SeqrConfig::SEQR_MODE] = $this->config->getMode();
+        $helper->fields_value[SeqrConfig::SEQR_WSDL] = $this->config->getWsdl();
         $helper->fields_value[SeqrConfig::SEQR_PAYMENT_TIMEOUT] = $this->config->getTimeout();
 
         return $helper->generateForm($fields_form);
     }
 
-    private function getModes() {
-        return array(
-            array(
-                'id' => SeqrConfig::SEQR_MODE_DEMO,
-                'name' => "Demo/Test server"
-            ),
-            array(
-                'id' => SeqrConfig::SEQR_MODE_LIVE,
-                'name' => "Live/Production server"
-            )
-        );
-    }
-
+    /**
+     * Helper function used to validate configuration values provided by the user.
+     * @param $value
+     * @param $errorMessage
+     * @param $output
+     * @return bool
+     */
     private function validateValue($value, $errorMessage, &$output) {
 
         $validation = !empty($value) && Validate::isGenericName($value);
@@ -206,6 +214,10 @@ class Seqr extends PaymentModuleCore {
         return $validation;
     }
 
+    /**
+     * Hook payment, displays SEQR payment option on payment selection page.
+     * @param $params
+     */
     public function hookPayment($params) {
 
         if (!$this->active) {
@@ -220,18 +232,14 @@ class Seqr extends PaymentModuleCore {
         $this->smarty->assign(array(
             'this_path' => $this->_path,
             'this_path_bw' => $this->_path,
-            'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name . '/'
+            'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'module/' . $this->name . '/'
         ));
         return $this->display(__FILE__, 'seqr_payment_option.tpl');
 
     }
 
-    public function hookPaymentReturn($params) {
-
-    }
-
     /**
-     * Adds SEQR css definition to the header.
+     * Adds SEQR css and JS definitions to the header.
      * @param $params
      */
     public function hookDisplayHeader($params) {

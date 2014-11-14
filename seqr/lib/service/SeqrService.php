@@ -2,7 +2,7 @@
 
 include_once(dirname(__FILE__) . "/../api/SeqrApi.php");
 include_once(dirname(__FILE__) . "/../model/SeqrInvoiceFactory.php");
-include_once(dirname(__FILE__) . "/../common/SeqrConfig.php");
+include_once(dirname(__FILE__) . "/../config/SeqrConfig.php");
 
 /**
  * Class SeqrService

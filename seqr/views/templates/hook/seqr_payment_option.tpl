@@ -3,7 +3,7 @@
         <p class="payment_module">
             <a class="seqr" href="{$link->getModuleLink('seqr', 'payment')|escape:'html'}" title="{l s='Pay by SEQR' mod='seqr'}">
                 {l s='Pay by SEQR' mod='seqr'}
-                <span>(Secure and fast payment)</span>
+                <span>(Secure and fast payments)</span>
             </a>
         </p>
     </div>

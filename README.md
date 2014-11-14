@@ -16,11 +16,9 @@ Learn more about SEQR on www.seqr.com
 
 ## Supported Prestashop versions: ##
 * 1.6
-* 1.5
-* 1.4
 
 ## Dowloads ##
-* Version 1.0: [seqr-ps-plugin-1.0.zip](build/seqr-ps-plugin-1.0.zip)
+* Version 1.0.0: [seqr-ps-plugin-1.0.0.zip](build/seqr-ps-plugin-1.0.0.zip)
 * all versions: [builds](build/)
 
 # Plugin #
@@ -52,7 +50,7 @@ Plugin can be installed via installation in administration or by copping all plu
 2. Open Prestashop administration page, go to "Modules" and on the top right corner choose "Add a new module".
 3. Select the downloaded package and confirm by clicking "Upload this module".
 4. Find the module on the module list and install it.
-5. Provide valid configuration data.
+5. Provide valid configuration values.
 
 ### Configuration ###
 
@@ -74,17 +72,17 @@ Please check it for understanding how work web component http://github.com/Seaml
 For more information about SEQR API please check http://developer.seqr.com/merchant/webshop/
 
 ### Plugin directories and files: ###
-* controllers
-* css
-* img
-* js
-* lib
-* views
-* seqr.php
+* controllers - front controllers used in the payment process
+* css - styles definition for the plugin
+* img - images
+* js - scripts required by the plugin
+* lib - the SEQR e-commerce library and its Prestashop implementation
+* views - view definitions for the payment process
+* seqr.php - module entry point
 
 ### Major php classes ###
-* _seqr/seqr.php_ - an entry point of the module, provides information about module, administration form, installation and remove module procedure.
-* _seqr/impl/prestashop/PsConfig.php_ - defines configuration for the Prestashop platform, installation, uninstall definitions.
-* _seqr/impl/prestashop/PsFactory.php_ - defines conversion from Prestashop order to the unified invoice representation.
-* _seqr/impl/prestashop/PsSeqrService.php_ - defines logic, sens request to the SEQR system via provided API (seqr/lib/api/SeqrApi.php)
+* _seqr/seqr.php_ - an entry point of the module, provides information about module, administration form, the installation and remove module procedures.
+* _seqr/prestashop/PsConfig.php_ - defines configuration for the Prestashop platform, installation, uninstall definitions.
+* _seqr/prestashop/PsFactory.php_ - defines conversion from Prestashop order to the unified invoice representation.
+* _seqr/prestashop/PsSeqrService.php_ - defines logic, sends requests to the SEQR system via provided API (seqr/lib/api/SeqrApi.php)
 
