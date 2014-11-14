@@ -15,7 +15,7 @@ class Seqr extends PaymentModuleCore {
 
         $this->name = 'seqr';
         $this->tab = 'payments_gateways';
-        $this->version = '1.0.0';
+        $this->version = '1.1.0';
         $this->author = 'SEQR Team';
         $this->need_instance = 1;
         $this->is_configurable = 1;
@@ -268,10 +268,16 @@ class Seqr extends PaymentModuleCore {
         return null;
     }
 
+    /**
+     * Gets Prestashop version in XX format.
+     * - 15 means 1.5.x version
+     * - 16 means 1.6.x version
+     * @return string
+     */
     public function getShopVersion() {
 
         $version = _PS_VERSION_;
-        return substr($version, 0, 1) . substr($version, 2, 1);
+        return intval(substr($version, 0, 1) . substr($version, 2, 1));
     }
 }
 
