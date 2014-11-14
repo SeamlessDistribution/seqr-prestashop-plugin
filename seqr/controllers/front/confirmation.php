@@ -31,7 +31,9 @@ class SeqrConfirmationModuleFrontController extends ModuleFrontControllerCore {
         $seqrData = $service->getInvoiceData();
 
         $this->context->smarty->assign(array(
-            'shopUrl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__
+            'shopVersion' => $this->module->getShopVersion(),
+            'navigation' => _PS_MODULE_DIR_ . "seqr/views/templates/front/navigation.tpl",
+            'breadcrumb' => _PS_MODULE_DIR_ . "seqr/views/templates/front/breadcrumb.tpl"
         ));
 
         if ($seqrData->status === SeqrConfig::SEQR_PAYMENT_PAID) {

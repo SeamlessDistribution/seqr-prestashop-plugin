@@ -32,9 +32,11 @@ class SeqrPaymentModuleFrontController extends ModuleFrontControllerCore {
             'cust_currency' => $cart->id_currency,
             'currencies' => $this->module->getCurrency((int)$cart->id_currency),
             'total' => $cart->getOrderTotal(true, Cart::BOTH),
+            'shopVersion' => $this->module->getShopVersion(),
             'this_path' => $this->module->getPathUri(),
             'this_path_bw' => $this->module->getPathUri(),
-            'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'module/'.$this->module->name.'/'
+            'this_path_ssl' => Tools::getShopDomainSsl(true, true).__PS_BASE_URI__.'module/'.$this->module->name.'/',
+            'breadcrumb' => _PS_MODULE_DIR_ . "seqr/views/templates/front/breadcrumb.tpl"
         ));
 
         $this->setTemplate('payment.tpl');

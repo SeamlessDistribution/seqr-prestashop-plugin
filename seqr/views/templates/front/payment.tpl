@@ -1,5 +1,4 @@
-{capture name=path}{l s='SEQR payment' mod='seqr'}{/capture}
-{*{include file="$tpl_dir./breadcrumb.tpl"}*}
+{include file="$breadcrumb"}
 
 <h1 class="page-heading">{l s='Order summary' mod='seqr'}</h1>
 
@@ -51,17 +50,26 @@
             </p>
         </div>
         <p class="cart_navigation clearfix" id="cart_navigation">
-            <a class="button-exclusive btn btn-default"
-               href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html'}">
-                <i class="icon-chevron-left"></i>
-                {l s='Other payment methods' mod='seqr'}
-            </a>
-            <button class="button btn btn-default button-medium" type="submit">
-                <span>
-                    {l s='I confirm my order' mod='seqr'}
-                    <i class="icon-chevron-right right"></i>
-                </span>
-            </button>
+            {if $shopVersion >= 16}
+                <a class="button-exclusive btn btn-default"
+                   href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html'}">
+                    <i class="icon-chevron-left"></i>
+                    {l s='Other payment methods' mod='seqr'}
+                </a>
+                <button class="button btn btn-default button-medium" type="submit">
+                    <span>
+                        {l s='I confirm my order' mod='seqr'}
+                        <i class="icon-chevron-right right"></i>
+                    </span>
+                </button>
+            {/if}
+            {if $shopVersion == 15}
+                <a class="button_large"
+                   href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html'}">
+                    {l s='Other payment methods' mod='seqr'}
+                </a>
+                <input class="exclusive_large" type="submit" value="{l s='I confirm my order' mod='seqr'}" />
+            {/if}
         </p>
     </form>
 {/if}

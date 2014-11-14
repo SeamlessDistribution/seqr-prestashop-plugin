@@ -61,7 +61,9 @@ class SeqrPaymentCodeModuleFrontController extends ModuleFrontControllerCore {
             'this_path' => $this->module->getPathUri(),
             'this_path_bw' => $this->module->getPathUri(),
             'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'module/seqr/',
-            'webPluginUrl' => $this->service->getWebPluginUrl()
+            'webPluginUrl' => $this->service->getWebPluginUrl(),
+            'backUrl' => $this->service->getBackUrl(),
+            'breadcrumb' => _PS_MODULE_DIR_ . "seqr/views/templates/front/breadcrumb.tpl"
         ));
 
         $this->setTemplate('payment_code.tpl');
