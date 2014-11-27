@@ -1,36 +1,37 @@
 <?php
 
-include_once('lib/prestashop/PsConfig.php');
+require_once("lib/prestashop/package.php");
 
-if (!defined('_PS_VERSION_'))
+if (!defined("_PS_VERSION_"))
     exit;
 
 /**
  * The entry point of the SEQR payment module.
  */
-class Seqr extends PaymentModuleCore {
+final class Seqr extends PaymentModule {
+
     public $config = null;
 
     public function __construct() {
 
-        $this->name = 'seqr';
-        $this->tab = 'payments_gateways';
-        $this->version = '1.1.0';
-        $this->author = 'SEQR Team';
+        $this->name = "seqr";
+        $this->tab = "payments_gateways";
+        $this->version = "1.1.0";
+        $this->author = "SEQR Team";
         $this->need_instance = 1;
         $this->is_configurable = 1;
-        $this->ps_versions_compliancy = array('min' => '1.4', 'max' => _PS_VERSION_);
+        $this->ps_versions_compliancy = array("min" => "1.5", "max" => _PS_VERSION_);
         $this->bootstrap = true;
 
         parent::__construct();
 
-        $this->displayName = $this->l('SEQR');
-        $this->description = $this->l('Accepts payments by SEQR.');
+        $this->displayName = $this->l("SEQR");
+        $this->description = $this->l("Accepts payments by SEQR.");
 
-        $this->confirmUninstall = $this->l('Are you sure you want to uninstall the SEQR module?');
+        $this->confirmUninstall = $this->l("Are you sure you want to uninstall the SEQR module?");
 
-        $this->config = new PsConfig();
-        $this->config->load();
+        $this->loadConfiguration();
+        $this->validateModuleSettings();
     }
 
     /**
@@ -40,8 +41,8 @@ class Seqr extends PaymentModuleCore {
     public function install() {
 
         if (!parent::install()
-            || !$this->registerHook('payment')
-            || !$this->registerHook('header')
+            || !$this->registerHook("payment")
+            || !$this->registerHook("header")
             || !$this->config->install()
         ) {
             return false;
@@ -71,7 +72,7 @@ class Seqr extends PaymentModuleCore {
 
         $output = null;
 
-        if (Tools::isSubmit('submit' . $this->name)) {
+        if (Tools::isSubmit("submit" . $this->name)) {
             // Saving configuration settings
 
             $user = strval(Tools::getValue(SeqrConfig::SEQR_USER_ID));
@@ -79,6 +80,8 @@ class Seqr extends PaymentModuleCore {
             $terminalPass = strval(Tools::getValue(SeqrConfig::SEQR_TERMINAL_PASS));
             $wsdl = strval(Tools::getValue(SeqrConfig::SEQR_WSDL));
             $timeout = strval(Tools::getValue(SeqrConfig::SEQR_PAYMENT_TIMEOUT));
+            $hideLeft = Tools::getValue(PsConfig::SEQR_HIDE_LEFT. "_check");
+            $hideRight = Tools::getValue(PsConfig::SEQR_HIDE_RIGHT. "_check");
 
             $valid = true;
             $valid = $this->validateValue($user, "Invalid user id", $output);
@@ -96,10 +99,12 @@ class Seqr extends PaymentModuleCore {
                     SeqrConfig::SEQR_WSDL => $wsdl,
                     SeqrConfig::SEQR_PAYMENT_TIMEOUT => $timeout
                 ));
+                $newConfig->hideLeftColumn = $hideLeft;
+                $newConfig->hideRightColumn = $hideRight;
                 $newConfig->save();
                 $this->config = $newConfig;
 
-                $output .= $this->displayConfirmation($this->l('Settings updated'));
+                $output .= $this->displayConfirmation($this->l("Settings updated"));
             } else {
                 $output .= $this->displayError($this->l("Please correct the form and try again"));
             }
@@ -113,87 +118,91 @@ class Seqr extends PaymentModuleCore {
      * @return mixed
      */
     public function displayForm() {
-        // Get default language
-        $default_lang = (int)Configuration::get('PS_LANG_DEFAULT');
+
 
         // Init Fields form array
-        $fields_form[0]['form'] = array(
-            'legend' => array(
-                'title' => $this->l('SEQR Settings'),
+        $fields_form[0]["form"] = array(
+            "legend" => array(
+                "title" => $this->l("SEQR Settings"),
             ),
-            'input' => array(
+            "input" => array(
                 array(
-                    'type' => 'text',
-                    'label' => $this->l('User id'),
-                    'name' => SeqrConfig::SEQR_USER_ID,
-                    'required' => true
+                    "type" => "text",
+                    "label" => $this->l("User id"),
+                    "name" => SeqrConfig::SEQR_USER_ID,
+                    "required" => true,
+                    "size" => 70
                 ),
                 array(
-                    'type' => 'text',
-                    'label' => $this->l('Terminal id'),
-                    'name' => SeqrConfig::SEQR_TERMINAL_ID,
-                    'required' => true
+                    "type" => "text",
+                    "label" => $this->l("Terminal id"),
+                    "name" => SeqrConfig::SEQR_TERMINAL_ID,
+                    "required" => true,
+                    "size" => 70
                 ),
                 array(
-                    'type' => 'text',
-                    'label' => $this->l('Terminal password'),
-                    'name' => SeqrConfig::SEQR_TERMINAL_PASS,
-                    'required' => true
+                    "type" => "text",
+                    "label" => $this->l("Terminal password"),
+                    "name" => SeqrConfig::SEQR_TERMINAL_PASS,
+                    "required" => true,
+                    "size" => 70
                 ),
                 array(
-                    'type' => 'text',
-                    'label' => $this->l('Payment timeout (in seconds)'),
-                    'name' => SeqrConfig::SEQR_PAYMENT_TIMEOUT,
-                    'required' => true
+                    "type" => "text",
+                    "label" => $this->l("Payment timeout (in seconds)"),
+                    "name" => SeqrConfig::SEQR_PAYMENT_TIMEOUT,
+                    "required" => true,
+                    "size" => 70
                 ),
                 array(
-                    'type' => 'text',
-                    'label' => $this->l('SEQR WSDL url'),
-                    'name' => SeqrConfig::SEQR_WSDL,
-                    'required' => true
+                    "type" => "text",
+                    "label" => $this->l("SEQR WSDL url"),
+                    "name" => SeqrConfig::SEQR_WSDL,
+                    "required" => true,
+                    "size" => 70
+                ),
+                array(
+                    "type" => "checkbox",
+                    "label" => $this->l("Hide left column"),
+                    "name" => PsConfig::SEQR_HIDE_LEFT,
+                    "required" => false,
+                    "values"    => array(
+                        "query" => array(
+                            array(
+                                "id" => "check",
+                                "name" => "",
+                                "val" => 'true'
+
+                            )
+                        ),
+                        "id" => "id",
+                        "name" => "name"
+                    )
+                ),
+                array(
+                    "type" => "checkbox",
+                    "label" => $this->l("Hide right column"),
+                    "name" => PsConfig::SEQR_HIDE_RIGHT,
+                    "required" => false,
+                    "values"    => array(
+                        "query" => array(
+                            array(
+                                "id" => "check",
+                                "val" => 'true',
+                                "name" => ""
+                            )
+                        ),
+                        "id" => "id",
+                        "name" => "name"
+                    )
                 )
             ),
-            'submit' => array(
-                'title' => $this->l('Save'),
-            )
+            "submit" => array(
+            "title" => $this->l("Save"),
+        )
         );
 
-        $helper = new HelperForm();
-
-        // Module, token and currentIndex
-        $helper->module = $this;
-        $helper->name_controller = $this->name;
-        $helper->token = Tools::getAdminTokenLite('AdminModules');
-        $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
-
-        // Language
-        $helper->default_form_language = $default_lang;
-        $helper->allow_employee_form_lang = $default_lang;
-
-        // Title and toolbar
-        $helper->title = $this->displayName;
-        $helper->show_toolbar = true;        // false -> remove toolbar
-        $helper->toolbar_scroll = true;      // yes - > Toolbar is always visible on the top of the screen.
-        $helper->submit_action = 'submit' . $this->name;
-        $helper->toolbar_btn = array(
-            'save' =>
-                array(
-                    'desc' => $this->l('Save'),
-                    'href' => AdminController::$currentIndex . '&configure=' . $this->name . '&save' . $this->name .
-                        '&token=' . Tools::getAdminTokenLite('AdminModules'),
-                ),
-            'back' => array(
-                'href' => AdminController::$currentIndex . '&token=' . Tools::getAdminTokenLite('AdminModules'),
-                'desc' => $this->l('Back to list')
-            )
-        );
-
-        // Load current value
-        $helper->fields_value[SeqrConfig::SEQR_USER_ID] = $this->config->getUserId();
-        $helper->fields_value[SeqrConfig::SEQR_TERMINAL_ID] = $this->config->getTerminalId();
-        $helper->fields_value[SeqrConfig::SEQR_TERMINAL_PASS] = $this->config->getTerminalPass();
-        $helper->fields_value[SeqrConfig::SEQR_WSDL] = $this->config->getWsdl();
-        $helper->fields_value[SeqrConfig::SEQR_PAYMENT_TIMEOUT] = $this->config->getTimeout();
+        $helper = $this->initHelperForm();
 
         return $helper->generateForm($fields_form);
     }
@@ -217,6 +226,7 @@ class Seqr extends PaymentModuleCore {
     /**
      * Hook payment, displays SEQR payment option on payment selection page.
      * @param $params
+     * @return array|mixed|string|void
      */
     public function hookPayment($params) {
 
@@ -230,12 +240,12 @@ class Seqr extends PaymentModuleCore {
         }
 
         $this->smarty->assign(array(
-            'this_path' => $this->_path,
-            'this_path_bw' => $this->_path,
-            'shopVersion' => $this->getShopVersion(),
-            'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'module/' . $this->name . '/'
+            "this_path" => $this->_path,
+            "this_path_bw" => $this->_path,
+            "shopVersion" => $this->getShopVersion(),
+            "this_path_ssl" => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . "modules/" . $this->name . "/"
         ));
-        return $this->display(__FILE__, 'seqr_payment_option.tpl');
+        return $this->display(__FILE__, "seqr_payment_option.tpl");
 
     }
 
@@ -245,8 +255,8 @@ class Seqr extends PaymentModuleCore {
      */
     public function hookDisplayHeader($params) {
 
-        $this->context->controller->addCss($this->_path . $this->getForVersion('css/seqr.css', dirname(__FILE__)));
-        $this->context->controller->addJS($this->_path . 'js/seqr.js');
+        $this->context->controller->addCss($this->_path . $this->getForVersion("css/seqr.css", dirname(__FILE__)));
+        $this->context->controller->addJS($this->_path . "js/seqr.js");
     }
 
     private function getForVersion($file, $path = "") {
@@ -258,7 +268,7 @@ class Seqr extends PaymentModuleCore {
             $ext = substr($file, strpos($file, ".") + 1, strlen($file));
 
             $fileForVer = $name . $version . "." . $ext;
-            $filePath = $path == "" ? $fileForVer : $path . '/' . $fileForVer;
+            $filePath = $path == "" ? $fileForVer : $path . "/" . $fileForVer;
             if (file_exists($filePath)) {
                 return $fileForVer;
             }
@@ -278,6 +288,69 @@ class Seqr extends PaymentModuleCore {
 
         $version = _PS_VERSION_;
         return intval(substr($version, 0, 1) . substr($version, 2, 1));
+    }
+
+    /**
+     * Validates module settings.
+     */
+    private function validateModuleSettings() {
+
+        if (!$this->config->isValid()) {
+            $this->warning = $this->l("The SEQR plugin must be configured in order to use this module correctly");
+        }
+    }
+
+    protected function loadConfiguration() {
+        $this->config = new PsConfig();
+        $this->config->load();
+    }
+
+    /**
+     * @return HelperForm
+     */
+    protected function initHelperForm() {
+
+        $helper = new HelperForm();
+
+        // Module, token and currentIndex
+        $helper->module = $this;
+        $helper->name_controller = $this->name;
+        $helper->token = Tools::getAdminTokenLite("AdminModules");
+        $helper->currentIndex = AdminController::$currentIndex . "&configure=" . $this->name;
+
+        // Language
+        $default_lang = (int)Configuration::get("PS_LANG_DEFAULT");
+        $helper->default_form_language = $default_lang;
+        $helper->allow_employee_form_lang = $default_lang;
+
+        // Title and toolbar
+        $helper->title = $this->displayName;
+        $helper->show_toolbar = true;        // false -> remove toolbar
+        $helper->toolbar_scroll = true;      // yes - > Toolbar is always visible on the top of the screen.
+        $helper->submit_action = "submit" . $this->name;
+        $helper->toolbar_btn = array(
+            "save" =>
+                array(
+                    "desc" => $this->l("Save"),
+                    "href" => AdminController::$currentIndex . "&configure=" . $this->name . "&save" . $this->name .
+                        "&token=" . Tools::getAdminTokenLite("AdminModules"),
+                ),
+            "back" => array(
+                "href" => AdminController::$currentIndex . "&token=" . Tools::getAdminTokenLite("AdminModules"),
+                "desc" => $this->l("Back to list")
+            )
+        );
+
+        // Load current value
+        $helper->fields_value[SeqrConfig::SEQR_USER_ID] = $this->config->getUserId();
+        $helper->fields_value[SeqrConfig::SEQR_TERMINAL_ID] = $this->config->getTerminalId();
+        $helper->fields_value[SeqrConfig::SEQR_TERMINAL_PASS] = $this->config->getTerminalPass();
+        $helper->fields_value[SeqrConfig::SEQR_WSDL] = $this->config->getWsdl();
+        $helper->fields_value[SeqrConfig::SEQR_PAYMENT_TIMEOUT] = $this->config->getTimeout();
+        $helper->fields_value[PsConfig::SEQR_HIDE_LEFT. "_check"] = $this->config->hideLeftColumn;
+        $helper->fields_value[PsConfig::SEQR_HIDE_RIGHT . "_check"] = $this->config->hideRightColumn;
+
+        return $helper;
     }
 }
 

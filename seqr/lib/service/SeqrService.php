@@ -15,7 +15,6 @@ abstract class SeqrService {
     protected $order = null;
     protected $loaded = false;
     protected $api = null;
-    protected $paymentStatusListener = null;
 
     /**
      * Initializes major parts of the service, API and the factory object.
@@ -91,7 +90,7 @@ abstract class SeqrService {
      * @return mixed
      * @throws Exception
      */
-    public function getPaymentStatus() {
+    public function processPaymentStatus() {
 
         $this->throwExceptionIfNotLoaded();
 
@@ -115,7 +114,7 @@ abstract class SeqrService {
         // updates payment data
         $this->saveSeqrData($seqrData->fromRawData($result));
 
-        $this->paymentStatusListener->onPaymentStatusChange($this->order->getId(), $result->status);
+        $this->changeOrderStatus($result->status);
 
         return $result;
     }
@@ -156,14 +155,6 @@ abstract class SeqrService {
         '&injectCSS=true&statusCallback=seqrStatusUpdated&' .
         'invoiceQRCode=' . $this->getQrCode() . '&' .
         'statusURL=' . $this->getCheckStatusUrl();
-    }
-
-    /**
-     * Sets a listener to notify about payment status changes.
-     * @param PaymentStatusListener $listener
-     */
-    public function setPaymentStatusListener(PaymentStatusListener $listener) {
-        if ($listener) $this->paymentStatusListener = $listener;
     }
 
     /**
@@ -210,6 +201,13 @@ abstract class SeqrService {
     protected function getNotificationUrl() {
         return null;
     }
+
+    /**
+     * Changes order status in the database.
+     * @param $status - payment status from SEQR side
+     * @return mixed
+     */
+    public abstract function changeOrderStatus($status);
 }
 
 class SeqrData {

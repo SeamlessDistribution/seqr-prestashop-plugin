@@ -19,7 +19,7 @@ Learn more about SEQR on www.seqr.com
 * 1.5.x
 
 ## Dowloads ##
-* Version 1.1.0: [seqr-ps-plugin-1.1.0.zip](build/seqr-ps-plugin-1.1.0.zip)
+* Version 1.2.0: [seqr-ps-plugin-1.2.0.zip](build/seqr-ps-plugin-1.2.0.zip)
 * all versions: [builds](build/)
 
 # Plugin #
@@ -65,6 +65,9 @@ Default timeout is set to 120 seconds.
 
 All properties are required and should be configured before enabling this payment method in production.
 
+Additional optional settings _Hide left column_ and _Hide right column_ are used to override default template settings
+and hide particular columns during the SEQR payment process.
+
 ## Development & File structure ##
 
 Plugin based on javascript plugin for SEQR integration.
@@ -86,4 +89,5 @@ For more information about SEQR API please check http://developer.seqr.com/merch
 * _seqr/prestashop/PsConfig.php_ - defines configuration for the Prestashop platform, installation, uninstall definitions.
 * _seqr/prestashop/PsFactory.php_ - defines conversion from Prestashop order to the unified invoice representation.
 * _seqr/prestashop/PsSeqrService.php_ - defines logic, sends requests to the SEQR system via provided API (seqr/lib/api/SeqrApi.php)
+* _seqr/seqr_package.php_ - includes all necessary classes to work with SEQR code.
 
