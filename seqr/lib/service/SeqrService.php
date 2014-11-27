@@ -100,7 +100,7 @@ abstract class SeqrService {
         $status = $seqrData->status;
         if ($status === SeqrConfig::SEQR_PAYMENT_PAID
             || $status === SeqrConfig::SEQR_PAYMENT_CANCELED) {
-            return $seqrData->status;
+            return $seqrData;
         }
 
         // check timeout
