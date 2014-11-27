@@ -17,17 +17,18 @@ p.payment_module a.seqr:after {
 }
 
 .seqr-confirmation {
-    margin-bottom: 40px;
+    margin: 50px;
 }
 
 .seqr-box {
     border: 1px solid #d6d4d4;
     padding: 10px;
-    margin-bottom: 20px;
+    margin: 10px auto;
     line-height: 23px;
+    width: 550px;
 }
 
-.seqr-box h2 {
+.seqr-box > * {
     text-align: center;
 }
 

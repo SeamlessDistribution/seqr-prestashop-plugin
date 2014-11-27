@@ -1,26 +1,19 @@
 <?php
 
-include_once(dirname(__FILE__) . "/../../lib/prestashop/PsSeqrService.php");
+require_once(dirname(__FILE__) . "/../../lib/prestashop/package.php");
 
 /**
- * Created by IntelliJ IDEA.
+ * Validates the cart, places the order and sends invoice to the SEQR server.
+ * Then the SEQR code is printed and shown to the client.
+ *
  * User: kmanka
  * Date: 10/10/14
  * Time: 14:43
  */
-class SeqrPaymentCodeModuleFrontController extends ModuleFrontControllerCore {
+class SeqrPaymentCodeModuleFrontController extends PsSeqrFrontController {
 
     private $service = null;
     private $error= false;
-
-    function __construct() {
-
-        parent::__construct();
-
-        $this->ssl = true;
-        $this->display_column_left = false;
-        $this->display_column_right = false;
-    }
 
     public function process() {
 
@@ -37,7 +30,8 @@ class SeqrPaymentCodeModuleFrontController extends ModuleFrontControllerCore {
             $this->service->sendInvoice();
 
         } catch (Exception $e) {
-            PrestaShopLogger::addLog("Exception occurred when talking with SEQR", 3, null, $e);
+            PrestaShopLogger::addLog("Exception occurred when sending invoice to SEQR", 3, null, $e);
+            $this->service->changeOrderStatus(SeqrConfig::SEQR_PAYMENT_ERROR);
             $this->error = true;
         }
     }
@@ -52,22 +46,18 @@ class SeqrPaymentCodeModuleFrontController extends ModuleFrontControllerCore {
         }
 
         $cart = $this->context->cart;
+        $currency = new Currency($cart->id_currency);
+
+        $this->assignBreadcrumb();
         $this->context->smarty->assign(array(
             'nbProducts' => $cart->nbProducts(),
-            'orderId' => $this->service->getOrderId(),
-            'cust_currency' => $cart->id_currency,
-            'currencies' => $this->module->getCurrency((int)$cart->id_currency),
+            'currency' => $currency,
             'total' => $cart->getOrderTotal(true, Cart::BOTH),
-            'this_path' => $this->module->getPathUri(),
-            'this_path_bw' => $this->module->getPathUri(),
-            'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'module/seqr/',
             'webPluginUrl' => $this->service->getWebPluginUrl(),
             'backUrl' => $this->service->getBackUrl(),
-            'breadcrumb' => _PS_MODULE_DIR_ . "seqr/views/templates/front/breadcrumb.tpl"
         ));
 
         $this->setTemplate('payment_code.tpl');
-
     }
 
     /**
@@ -137,9 +127,8 @@ class SeqrPaymentCodeModuleFrontController extends ModuleFrontControllerCore {
     }
 
     private function showPaymentFailed() {
-        $this->context->smarty->assign(array(
-            'shopUrl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__
-        ));
+        $this->assignBreadcrumb();
+        $this->assignNavigation();
         $this->setTemplate('payment_failed.tpl');
     }
 }

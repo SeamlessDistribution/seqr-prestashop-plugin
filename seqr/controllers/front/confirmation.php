@@ -1,17 +1,21 @@
 <?php
 
-include_once(dirname(__FILE__) . "/../../lib/prestashop/PsSeqrService.php");
+require_once(dirname(__FILE__) . "/../../lib/prestashop/package.php");
 
-class SeqrConfirmationModuleFrontController extends ModuleFrontControllerCore {
+/**
+ * Class SeqrConfirmationModuleFrontController
+ *
+ * Checks the last status for order and prints a page with the status information.
+ */
+class SeqrConfirmationModuleFrontController extends PsSeqrFrontController {
 
 
     public function __construct() {
 
         parent::__construct();
 
-        $this->display_column_left = false;
-        $this->display_column_right = false;
-        $this->ssl = true;
+        $this->assignBreadcrumb();
+        $this->assignNavigation();
     }
 
     public function initContent() {
@@ -29,12 +33,6 @@ class SeqrConfirmationModuleFrontController extends ModuleFrontControllerCore {
         $service = new PsSeqrService($this->module->config, $order);
 
         $seqrData = $service->getInvoiceData();
-
-        $this->context->smarty->assign(array(
-            'shopVersion' => $this->module->getShopVersion(),
-            'navigation' => _PS_MODULE_DIR_ . "seqr/views/templates/front/navigation.tpl",
-            'breadcrumb' => _PS_MODULE_DIR_ . "seqr/views/templates/front/breadcrumb.tpl"
-        ));
 
         if ($seqrData->status === SeqrConfig::SEQR_PAYMENT_PAID) {
             $this->succeed();

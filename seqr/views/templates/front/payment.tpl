@@ -1,9 +1,6 @@
+{assign var='headName' value="Payment summary"}
+
 {include file="$breadcrumb"}
-
-<h1 class="page-heading">{l s='Order summary' mod='seqr'}</h1>
-
-{assign var='current_step' value='payment'}
-{include file="$tpl_dir./order-steps.tpl"}
 
 {if $nbProducts <= 0}
     <p class="warning">{l s='Your shopping cart is empty.' mod='seqr'}</p>
@@ -34,8 +31,8 @@
 
             <p>
                 - {l s='We allow the following currency to be sent via SEQR:' mod='seqr'}&nbsp;
-                <b>{$currencies.0.iso_code}</b>
-                <input type="hidden" name="currency_payement" value="{$currencies.0.id_currency}"/>
+                <b>{$currency->iso_code}</b>
+                <input type="hidden" name="currency_payment" value="{$currency->id}"/>
             </p>
 
             <p>
