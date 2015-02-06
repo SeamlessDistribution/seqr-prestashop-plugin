@@ -24,7 +24,8 @@ final class SeqrApi {
 
             return $result;
         } catch(Exception $e) {
-            throw new Exception("SEQR API - Send invoice error: ", 100, $e);
+            PrestaShopLogger::addLog($e->getMessage());
+            throw new Exception("SEQR API - Send invoice error");
         }
     }
 
@@ -42,7 +43,8 @@ final class SeqrApi {
 
             return $result;
         } catch(Exception $e) {
-            throw new Exception("SEQR API - Get payment status error: ", 110, $e);
+            PrestaShopLogger::addLog($e->getMessage());
+            throw new Exception("SEQR API - Get payment status error");
         }
     }
 
@@ -183,7 +185,8 @@ final class SeqrApi {
 
             return $result;
         } catch(Exception $e) {
-            throw new Exception("SEQR API - Cancel invoice error: ", 120, $e);
+            PrestaShopLogger::addLog($e->getMessage());
+            throw new Exception("SEQR API - Cancel invoice error");
         }
     }
 
