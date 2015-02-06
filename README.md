@@ -15,11 +15,10 @@ Through our state of the art technology, we have created the easiest, secure, an
 Learn more about SEQR on www.seqr.com
 
 ## Supported Prestashop versions: ##
-* >= 1.6.x
-* 1.5.x
+* >= 1.5.x
 
 ## Dowloads ##
-* Version 1.2.0: [seqr-ps-plugin-1.2.0.zip](build/seqr-ps-plugin-1.2.0.zip)
+* Version 1.2.1: [seqr-ps-plugin-1.2.1.zip](build/seqr-ps-plugin-1.2.1.zip)
 * all versions: [builds](build/)
 
 # Plugin #
