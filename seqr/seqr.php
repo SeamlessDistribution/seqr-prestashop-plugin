@@ -16,7 +16,7 @@ final class Seqr extends PaymentModule {
 
         $this->name = "seqr";
         $this->tab = "payments_gateways";
-        $this->version = "1.1.0";
+        $this->version = "1.2.2";
         $this->author = "SEQR Team";
         $this->need_instance = 1;
         $this->is_configurable = 1;
