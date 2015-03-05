@@ -119,7 +119,7 @@ class SeqrPaymentCodeModuleFrontController extends PsSeqrFrontController {
     private function createService() {
 
         $cart = $this->context->cart;
-        $orderId = OrderCore::getOrderByCartId($cart->id);
+        $orderId = Order::getOrderByCartId($cart->id);
         $order = new Order($orderId);
         $service = new PsSeqrService($this->module->config, $order);
 
