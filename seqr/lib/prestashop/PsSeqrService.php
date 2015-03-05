@@ -37,7 +37,15 @@ class PsSeqrService extends SeqrService {
     private function getPaymentObject() {
 
         $this->throwExceptionIfNotLoaded();
-        return OrderPayment::getByInvoiceId($this->order->getInvoiceNumber())->getFirst();
+
+        $orderId = $this->getOrderId();
+        if (isset($orderId)) {
+            $payments = OrderPayment::getByOrderId($orderId);
+            if (is_array($payments) && count($payments) > 0) {
+                return $payments[0];
+            }
+        }
+        return null;
     }
 
     public function getCheckStatusUrl() {

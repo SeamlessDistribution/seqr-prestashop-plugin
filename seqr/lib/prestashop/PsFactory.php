@@ -22,7 +22,7 @@ class PsFactory extends SeqrInvoiceFactory {
             $seqrInvoice->setShippingInclTax($order->total_shipping_tax_incl);
             $seqrInvoice->setShippingTaxAmount($order->carrier_tax_rate);
 
-            $currency = new CurrencyCore($order->id_currency);
+            $currency = new Currency($order->id_currency);
             $seqrInvoice->setOrderCurrencyCode($currency->iso_code);
 
             $seqrInvoice->setBackUrl("http://localhost/back");
