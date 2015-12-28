@@ -90,3 +90,26 @@ For more information about SEQR API please check http://developer.seqr.com/merch
 * _seqr/prestashop/PsSeqrService.php_ - defines logic, sends requests to the SEQR system via provided API (seqr/lib/api/SeqrApi.php)
 * _seqr/seqr_package.php_ - includes all necessary classes to work with SEQR code.
 
+# Plugin development using docker-compose
+
+Please make sure you have installed docker and docker-compose correctly.
+
+First grant full access for all users to the seqr plugin directory.
+
+```bash
+
+chmod -Rf o+rwx ./seqr
+
+```
+
+then run the docker-compose command:
+
+```bash
+
+docker-compose up -d
+
+```
+
+You can access the Prestashop site by hiting localhost:8080 in the web browser.
+
+Happy coding!
