@@ -241,6 +241,7 @@ class SeqrData {
             if (isset($json->ver)) $this->ver = $json->ver;
             if (isset($json->qr)) $this->qr = $json->qr;
             if (isset($json->time)) $this->time = $json->time;
+            if (isset($json->ersRef)) $this->ersRef = $json->ersRef;
         }
     }
 
@@ -255,6 +256,8 @@ class SeqrData {
             if (isset($rawData->version)) $this->ver = $rawData->version;
             if (isset($rawData->invoiceQRCode)) $this->qr = $rawData->invoiceQRCode;
             if (isset($rawData->invoiceReference)) $this->ref = $rawData->invoiceReference;
+            if (isset($rawData->ersReference)) $this->ersRef = $rawData->ersReference;
+
         }
         return $this;
     }
@@ -269,7 +272,8 @@ class SeqrData {
             "status" => $this->emptyIfNull($this->status),
             "ver" => $this->emptyIfNull($this->ver),
             "qr" => $this->emptyIfNull($this->qr),
-            "time" =>$this->emptyIfNull($this->time)
+            "time" =>$this->emptyIfNull($this->time),
+            "ersRef" =>$this->emptyIfNull($this->ersRef)
         );
     }
 
@@ -278,6 +282,7 @@ class SeqrData {
     }
 
     public $ref = null;
+    public $ersRef = null;
     public $status = null;
     public $ver = null;
     public $qr = null;

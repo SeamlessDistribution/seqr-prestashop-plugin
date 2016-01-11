@@ -79,6 +79,7 @@ final class PsConfig extends SeqrCoreConfig
               `amount_refunded` decimal(20,6) DEFAULT 0,
               `time` int(11) NOT NULL,
               `qr_code` varchar(100) NOT NULL,
+              `ers_reference` varchar(100) NOT NULL DEFAULT "",
               PRIMARY KEY (`id_transaction`)
             ) ENGINE=' . _MYSQL_ENGINE_ . ' DEFAULT CHARSET=utf8;');
 

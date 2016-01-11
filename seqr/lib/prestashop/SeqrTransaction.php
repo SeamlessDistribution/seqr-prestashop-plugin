@@ -19,6 +19,7 @@ class SeqrTransaction extends ObjectModel
     public $amount_refunded;
     public $time;
     public $qr_code;
+    public $ers_reference;
 
     /**
      * @see ObjectModel::$definition
@@ -36,6 +37,7 @@ class SeqrTransaction extends ObjectModel
             'time' =>               array('type' => self::TYPE_INT, 'validate' => 'isUnsignedId', 'required' => true),
             'amount' =>             array('type' => self::TYPE_FLOAT, 'validate' => 'isPrice', 'required' => true),
             'amount_refunded' =>    array('type' => self::TYPE_FLOAT, 'validate' => 'isPrice'),
+            'ers_reference' =>      array('type' => self::TYPE_STRING, 'validate' => 'isString'),
         ),
     );
 

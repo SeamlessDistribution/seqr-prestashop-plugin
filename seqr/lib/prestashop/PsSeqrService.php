@@ -23,6 +23,7 @@ class PsSeqrService extends SeqrService {
             $transaction = new SeqrTransaction($payment->transaction_id);
 
             $transaction->amount = $payment->amount;
+            $transaction->ers_reference = $data->ersRef;
             $transaction->id_seqr = $data->ref;
             $transaction->time =(int)$data->time;
             $transaction->status = $data->status;
