@@ -20,7 +20,7 @@ abstract class SeqrInvoiceFactory {
         if (is_array($items)) {
 
             foreach($items as $item) {
-                $newItem = new SeqrItem();
+                $newItem = new SeqrInvoiceItem();
                 $this->createItem($item, $newItem);
                 array_push($invoiceItems, $newItem);
             }
@@ -31,7 +31,7 @@ abstract class SeqrInvoiceFactory {
 
     protected abstract function createInvoice($order, SeqrInvoice &$seqrInvoice);
 
-    protected abstract function createItem($orderItem, SeqrItem &$seqrItem);
+    protected abstract function createItem($orderItem, SeqrInvoiceItem &$seqrItem);
 
     protected abstract function getItems($order);
 

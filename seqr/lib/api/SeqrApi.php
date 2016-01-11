@@ -173,7 +173,7 @@ final class SeqrApi {
         return $invoice;
     }
 
-    private function createRow(SeqrItem $item, $currencyCode, $unitType) {
+    private function createRow(SeqrInvoiceItem $item, $currencyCode, $unitType) {
         return array(
             'itemDescription' => $item->getName(),
             'itemSKU' => $item->getSku(),
