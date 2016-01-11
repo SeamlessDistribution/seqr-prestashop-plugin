@@ -26,8 +26,9 @@ class SeqrRefundsController extends ModuleAdminController {
 	private function seqrTransactionsAndRefunds() {
  		$fields = 'o.id_order, 
  				  CONCAT(LEFT(c.`firstname`, 1), \'. \', c.`lastname`) AS `customerName`,
- 				  total_paid, 
- 				  total_products_wt ';
+ 				  total_paid,
+ 				  s.amount_refunded as returned,
+ 				  o.total_shipping_tax_incl as shipping_cost';
 		$sql = 'SELECT '.$fields.' FROM '._DB_PREFIX_.'orders o
  				LEFT JOIN '._DB_PREFIX_.'customer c ON o.id_customer = c.id_customer
  				INNER JOIN '._DB_PREFIX_.'seqr s ON o.id_order = s.id_order
@@ -39,7 +40,6 @@ class SeqrRefundsController extends ModuleAdminController {
  			$link = $this->context->link;
  			foreach ($results as &$row) {
  				$row["order_link"] = $link->getAdminLink('AdminOrders').'&vieworder&id_order='.$row["id_order"];
- 				$row["returned"] = 0; //TODO: remove this line, add sql
  			}
  		}
 
