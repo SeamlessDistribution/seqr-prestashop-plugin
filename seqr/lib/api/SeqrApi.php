@@ -192,8 +192,7 @@ final class SeqrApi {
     }
     
     private function createRefundInvoice($amount, $currencyCode) {
-    	$currencyCode = $order->getOrderCurrencyCode();
-    	
+
     	return array(
 	            'title' => "SEQR refund",
 	            'totalAmount' => array(
