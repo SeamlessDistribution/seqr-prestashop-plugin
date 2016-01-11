@@ -1,0 +1,47 @@
+<?php
+
+
+class SeqrRefundsController extends ModuleAdminController {
+
+	public function __construct()
+	{
+		parent::__construct();
+		$this->bootstrap = true;
+		
+ 		$this->context = Context::getContext();
+		$this->tpl_folder = '';
+		$this->override_folder = '';
+	}
+	
+	public function initContent() {
+		parent::initContent();
+		
+        $smarty = $this->context->smarty;
+        $smarty->assign('seqrPayments', $this->seqrTransactionsAndRefunds());
+
+        $this->setTemplate('refunds.tpl');
+        $this->context->controller->addCSS($this->getTemplatePath().'refunds.css');
+	}
+	
+	private function seqrTransactionsAndRefunds() {
+ 		$fields = 'id_order, 
+ 				  CONCAT(LEFT(c.`firstname`, 1), \'. \', c.`lastname`) AS `customerName`,
+ 				  total_paid, 
+ 				  total_products_wt ';
+		$sql = 'SELECT '.$fields.' FROM '._DB_PREFIX_.'orders o
+ 				LEFT JOIN '._DB_PREFIX_.'customer c ON o.id_customer = c.id_customer
+ 			    WHERE o.payment = \'SEQR\'
+ 				ORDER BY id_order DESC';
+
+ 		$results = Db::getInstance()->ExecuteS($sql);
+ 		if (sizeof($results) > 0) {
+ 			$link = $this->context->link;
+ 			foreach ($results as &$row) {
+ 				$row["order_link"] = $link->getAdminLink('AdminOrders').'&vieworder&id_order='.$row["id_order"];
+ 				$row["returned"] = 0; //TODO: remove this line, add sql
+ 			}
+ 		}
+
+		return $results;
+	}
+}

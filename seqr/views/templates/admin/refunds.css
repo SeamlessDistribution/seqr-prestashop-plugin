@@ -1,0 +1,3 @@
+.table { display: table; } 
+.table>* { display: table-row; }
+.table>*>* { display: table-cell; }

@@ -45,6 +45,7 @@ final class Seqr extends PaymentModule {
             || !$this->registerHook("header")
             || !$this->registerHook("actionOrderReturnStatus")
             || !$this->config->install()
+        	|| !$this->installModuleTab('SeqrRefunds', array(1=>'SEQR Refunds'), 0)
         ) {
             return false;
         }
@@ -57,7 +58,8 @@ final class Seqr extends PaymentModule {
      */
     public function uninstall() {
         if (
-            !$this->config->uninstall()
+        	!$this->removeModuleTab('SeqrRefunds')
+            || !$this->config->uninstall()
             || !parent::uninstall()
         ) {
             return false;
@@ -295,6 +297,26 @@ final class Seqr extends PaymentModule {
         return intval(substr($version, 0, 1) . substr($version, 2, 1));
     }
 
+    private function installModuleTab($tabClass, $tabName, $idTabParent)
+    {
+    	$tab = new Tab();
+    	$tab->name = $tabName;
+    	$tab->class_name = $tabClass;
+    	$tab->module = $this->name;
+    	$tab->id_parent = $idTabParent;
+    	$tab->active = 1;
+    	if(!$tab->save())
+    		return false;
+    	return true;
+    }
+    
+    private function removeModuleTab($tabClass) {
+    	$tab = new Tab((int)Tab::getIdFromClassName($tabClass));
+    	if($tab)
+    		$tab->delete();
+    	return true;
+    }
+    
     /**
      * Validates module settings.
      */
