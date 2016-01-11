@@ -43,7 +43,6 @@ final class Seqr extends PaymentModule {
         if (!parent::install()
             || !$this->registerHook("payment")
             || !$this->registerHook("header")
-            || !$this->registerHook("actionOrderReturnStatus")
             || !$this->config->install()
         	|| !$this->installModuleTab('SeqrRefunds', array(1=>'SEQR Refunds'), 0)
         ) {
@@ -250,10 +249,6 @@ final class Seqr extends PaymentModule {
         ));
         return $this->display(__FILE__, "seqr_payment_option.tpl");
 
-    }
-
-    public function hookActionOrderReturnStatus($params) {
-        
     }
 
     /**
