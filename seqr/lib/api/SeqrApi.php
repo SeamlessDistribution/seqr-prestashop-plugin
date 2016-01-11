@@ -52,10 +52,12 @@ final class SeqrApi {
     
     	try {
     		$SOAP = $this->SOAP();
+    		$invoice = $this->createRefundInvoice($amount, $currencyCode);
+
     		$result = $SOAP->refundPayment(array(
     				'context' => $this->getRequestContext(),
     				'ersReference' => $ersReference,
-    				'invoice' => $this->createRefundInvoice($amount, $currencyCode)
+    				'invoice' => $invoice
     		))->return;
     
     		if ($result->resultCode != 0) throw new Exception($result->resultCode . " : " . $result->resultDescription);
@@ -76,7 +78,9 @@ final class SeqrApi {
                 'userId' => $this->config->getUserId()
             ),
             'password' => $this->config->getTerminalPass(),
-            'clientRequestTimeout' => '0'
+            'clientRequestTimeout' => '0',
+        	'channel' => 'WS',
+        	'clientId' => 'Prestashop plugin'
         );
     }
 
@@ -198,7 +202,8 @@ final class SeqrApi {
 	            'totalAmount' => array(
 	                'currency' => $currencyCode,
 	                'value' => $this->toFloat($amount)
-	            )
+	            ),
+        		'cashierId' => 'WEB'
     	);
     }
 

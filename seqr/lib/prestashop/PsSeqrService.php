@@ -58,6 +58,12 @@ class PsSeqrService extends SeqrService {
         return null;
     }
 
+    protected function getSeqrTransaction() {
+    	$payment = $this->getPaymentObject();
+    	$transaction = new SeqrTransaction($payment->transaction_id);
+    	return $transaction;
+    }
+    
     private function getPaymentObject() {
 
         $this->throwExceptionIfNotLoaded();

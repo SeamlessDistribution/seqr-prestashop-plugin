@@ -1,6 +1,5 @@
 <?php
 
-
 class SeqrRefundsController extends ModuleAdminController {
 
 	public function __construct()
@@ -17,19 +16,21 @@ class SeqrRefundsController extends ModuleAdminController {
 		parent::initContent();
 		
         $smarty = $this->context->smarty;
+        
         $smarty->assign('seqrPayments', $this->seqrTransactionsAndRefunds());
 
         $this->setTemplate('refunds.tpl');
         $this->context->controller->addCSS($this->getTemplatePath().'refunds.css');
 	}
-	
+
 	private function seqrTransactionsAndRefunds() {
- 		$fields = 'id_order, 
+ 		$fields = 'o.id_order, 
  				  CONCAT(LEFT(c.`firstname`, 1), \'. \', c.`lastname`) AS `customerName`,
  				  total_paid, 
  				  total_products_wt ';
 		$sql = 'SELECT '.$fields.' FROM '._DB_PREFIX_.'orders o
  				LEFT JOIN '._DB_PREFIX_.'customer c ON o.id_customer = c.id_customer
+ 				INNER JOIN '._DB_PREFIX_.'seqr s ON o.id_order = s.id_order
  			    WHERE o.payment = \'SEQR\'
  				ORDER BY id_order DESC';
 
@@ -43,5 +44,18 @@ class SeqrRefundsController extends ModuleAdminController {
  		}
 
 		return $results;
+	}
+
+	/**
+	 * Process refund.
+	 */
+	public function postProcess() {
+		if (!isset($_POST['id_order']) || !isset($_POST['return'])) {
+            return false;
+        }
+
+		$order = new Order($_POST['id_order']);
+		$service = new PsSeqrService($this->module->config, $order);
+		$service->refundPayment($_POST['return']);
 	}
 }
