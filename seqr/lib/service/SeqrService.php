@@ -58,6 +58,24 @@ abstract class SeqrService {
     }
 
     /**
+     * Refunds a previous payment, either part of it or the whole sum.
+     * @param amount
+     */
+    public function refundPayment($amount) {
+    	$this->throwExceptionIfNotLoaded();
+
+    	$data = $this->getSeqrData();
+    	if ($amount == null || $amount > $data->amount)
+    		throw new Exception("Invalid amount!");
+
+    	$currencyCode = $this->order->getOrderCurrencyCode();
+    	$ersReference = $data->ersReference;
+    	$result = $this->api->refundPayment($ersReference, $amount, $currencyCode);
+    	
+    	return $result;
+    }
+    
+    /**
      * Gets last response received from the SEQR system.
      * @return mixed
      */

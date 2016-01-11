@@ -1,3 +1,14 @@
+#Mac OS
+.DS_Store
+
+#Idea
 *.iml
 .idea/
+
+#Eclipse
+.settings/
+.project
+.classpath
+.buildpath
+
 seqr/config.xml
