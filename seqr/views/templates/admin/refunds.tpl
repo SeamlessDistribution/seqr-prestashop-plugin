@@ -1,5 +1,13 @@
 {extends file="helpers/view/view.tpl"}
 {block name="override_tpl"}
+<style type="text/css">
+{literal}
+.table { display: table; width: 100%;} 
+.table>* { display: table-row; }
+.table>*.table-header { font-weight: bold; }
+.table>*>* { display: table-cell; }
+{/literal}
+</style>
 <div class="panel">
 	<div class="panel-heading">
 	SEQR Payments

@@ -1,4 +1,0 @@
-.table { display: table; } 
-.table>* { display: table-row; }
-.table>*.table-header { font-weight: bold; }
-.table>*>* { display: table-cell; }

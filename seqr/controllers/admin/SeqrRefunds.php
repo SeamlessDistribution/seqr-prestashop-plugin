@@ -20,7 +20,6 @@ class SeqrRefundsController extends ModuleAdminController {
         $smarty->assign('seqrPayments', $this->seqrTransactionsAndRefunds());
 
         $this->setTemplate('refunds.tpl');
-        $this->context->controller->addCSS($this->getTemplatePath().'refunds.css');
 	}
 
 	private function seqrTransactionsAndRefunds() {
@@ -32,7 +31,7 @@ class SeqrRefundsController extends ModuleAdminController {
 		$sql = 'SELECT '.$fields.' FROM '._DB_PREFIX_.'orders o
  				LEFT JOIN '._DB_PREFIX_.'customer c ON o.id_customer = c.id_customer
  				INNER JOIN '._DB_PREFIX_.'seqr s ON o.id_order = s.id_order
- 			    WHERE o.payment = \'SEQR\'
+ 			    WHERE o.payment = \'SEQR\' AND s.status=\'PAID\'
  				ORDER BY id_order DESC';
 
  		$results = Db::getInstance()->ExecuteS($sql);
