@@ -64,15 +64,19 @@ abstract class SeqrService {
     public function refundPayment($amount) {
     	$this->throwExceptionIfNotLoaded();
 
-    	$data = $this->getSeqrTransaction();
-    	if ($amount == null || $amount > $data->amount) //TODO: check if amount is not higher than already returned
+    	$transaction = $this->getSeqrTransaction();
+    	if ($amount == null || $amount > $transaction->amount - $transaction->amount_refunded)
     		throw new Exception("Invalid amount!");
 
     	$currencyCode = $this->order->getOrderCurrencyCode();
-    	$ersReference = $data->ers_reference;
+    	$ersReference = $transaction->ers_reference;
     	$result = $this->api->refundPayment($ersReference, $amount, $currencyCode);
 
-    	//TODO: save result, returned amount, set return flag
+    	if ($result->resultCode == "0") {
+    		$transaction->amount_refunded += $amount;
+    		$transaction->refund = 1;
+    		$transaction->save();
+    	}
     	
     	return $result;
     }
