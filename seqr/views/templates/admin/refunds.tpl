@@ -5,7 +5,7 @@
 	SEQR Payments
 	</div>
 	<div class="table">
-		<div>
+		<div class="table-header">
 			<div>Id</div>
 			<div>Customer Name</div>
 			<div>Order value</div>
