@@ -20,11 +20,11 @@
 					<input type="hidden" name="id_order" value="{$row['id_order']}" />
 				</div>
 				<div>{$row['customerName']}</div>
-				<div>{$row['total_paid']}</div>
-				<div>{$row['shipping_cost']}</div>
-				<div>{$row['returned']}</div>
+				<div>{convertPrice price=$row['total_paid']}</div>
+				<div>{convertPrice price=$row['shipping_cost']}</div>
+				<div>{convertPrice price=$row['returned']}</div>
 				<div>
-					<input name="return" type="number" step="any" min="0" max="{$row['total_paid'] - $row['returned']}" value="{$row['total_paid'] - $row['shipping_cost'] - $row['returned']}"/>
+					<input name="return" type="number" step="0.01" min="0" max="{$row['total_paid'] - $row['returned']}" value="{$row['total_paid'] - $row['shipping_cost'] - $row['returned']}"/>
 					<input class="button btn btn-default button-medium" type="submit" value="Refund"/>
 				</div>
 			</form>
