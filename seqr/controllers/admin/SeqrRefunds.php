@@ -59,4 +59,17 @@ class SeqrRefundsController extends ModuleAdminController {
 		$service = new PsSeqrService($this->module->config, $order);
 		$service->refundPayment($_POST['return']);
 	}
+
+	public function initModal()
+	{
+		parent::initModal();
+
+		$modal_content = $this->context->smarty->fetch($this->getTemplatePath() . 'refund_confirmation.tpl');
+		$this->modals[] = array(
+			'modal_id' => 'refundConfirmation',
+			'modal_class' => 'modal-lg',
+			'modal_title' => $this->l('SEQR refund confirmation'),
+			'modal_content' => $modal_content
+		);
+	}
 }
