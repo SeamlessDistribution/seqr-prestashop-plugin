@@ -2,6 +2,7 @@
 
 include_once(dirname(__FILE__) . "/../api/SeqrApi.php");
 include_once(dirname(__FILE__) . "/../model/SeqrInvoiceFactory.php");
+include_once(dirname(__FILE__) . "/../model/InvalidAmountException.php");
 include_once(dirname(__FILE__) . "/../config/SeqrConfig.php");
 
 /**
@@ -65,8 +66,11 @@ abstract class SeqrService {
     	$this->throwExceptionIfNotLoaded();
 
     	$transaction = $this->getSeqrTransaction();
-    	if ($amount == null || $amount > $transaction->amount - $transaction->amount_refunded)
-    		throw new Exception("Invalid amount!");
+    	if ($amount == null || $amount == 0 || $amount > $transaction->amount - $transaction->amount_refunded)
+    		throw new InvalidAmountException("Invalid amount: ".$amount
+    				.". Amount refunded must be greater than 0 and smaller than or equal to "
+    				.($transaction->amount - $transaction->amount_refunded)
+    				." for order id = ".$this->order->getId());
 
     	$currencyCode = $this->order->getOrderCurrencyCode();
     	$ersReference = $transaction->ers_reference;

@@ -18,6 +18,8 @@ class SeqrRefundsController extends ModuleAdminController {
         $smarty = $this->context->smarty;
         
         $smarty->assign('seqrPayments', $this->seqrTransactionsAndRefunds());
+        $smarty->assign('tpl_dir', _PS_THEME_DIR_);
+        $smarty->assign('request_uri', 'authentication'); // To hide 'Back' button
 
         $this->setTemplate('refunds.tpl');
 	}
@@ -57,7 +59,12 @@ class SeqrRefundsController extends ModuleAdminController {
 
 		$order = new Order($_POST['id_order']);
 		$service = new PsSeqrService($this->module->config, $order);
-		$service->refundPayment($_POST['return']);
+		try {
+			$service->refundPayment ( $_POST ['return'] );
+		} catch ( InvalidAmountException $e ) {
+			$errorMsg = Tools::displayError($e->getMessage());
+			$this->context->smarty->assign('errors', $errorMsg);
+		}
 	}
 
 	public function initModal()

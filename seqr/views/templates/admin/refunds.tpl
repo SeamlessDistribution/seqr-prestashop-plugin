@@ -1,5 +1,3 @@
-{extends file="helpers/view/view.tpl"}
-{block name="override_tpl"}
 <style type="text/css">
     {literal}
     .table {
@@ -37,6 +35,9 @@
         }
     };
 </script>
+
+{include file="$tpl_dir./errors.tpl"}
+
 <div class="panel">
     <div class="panel-heading">
         SEQR Payments
@@ -61,17 +62,20 @@
                 <div id="{$row['id_order']}_shipping">{convertPrice price=$row['shipping_cost']}</div>
                 <div id="{$row['id_order']}_returned">{convertPrice price=$row['returned']}</div>
                 <div>
-                    <input id="{$row['id_order']}_to_return" name="return" type="number" step="0.01" min="0"
-                           max="{$row['total_paid'] - $row['returned']}" value="{$row['suggested_return']}"/>
                     {*<input class="button btn btn-default button-medium" type="submit" value="Refund"/>*}
-                    <a id="{$row['id_order']}_refund_btn" class="btn btn-primary" style="margin-left: 10px;" href="#" data-target="#refundConfirmation"
+                    {if $row['total_paid'] - $row['returned'] == 0}
+                    	Fully refunded
+                    {else}
+                    	<input id="{$row['id_order']}_to_return" name="return" type="number" step="0.01" min="0"
+                           max="{$row['total_paid'] - $row['returned']}" value="{$row['suggested_return']}"/>
+                    	<a id="{$row['id_order']}_refund_btn" class="btn btn-primary" style="margin-left: 10px;" href="#" data-target="#refundConfirmation"
                        data-toggle="modal" data-link="" data-module-display-name="SEQR" data-module-name="seqr"
                        data-module-image="/modules/seqr/logo.png" data-author-name="SEQR Team" data-author-uri="" onclick="window.refund.selectRefund({$row['id_order']})">
                         Refund
-                    </a>
+                    	</a>
+                    {/if}
                 </div>
             </form>
         {/foreach}
     </div>
 </div>
-{/block}
