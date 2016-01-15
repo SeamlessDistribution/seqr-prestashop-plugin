@@ -66,7 +66,7 @@ abstract class SeqrService {
     	$this->throwExceptionIfNotLoaded();
 
     	$transaction = $this->getSeqrTransaction();
-    	if ($amount == null || $amount == 0 || $amount > $transaction->amount - $transaction->amount_refunded)
+        if ($amount == null || $amount == 0 || round($amount,2) > round($transaction->amount - $transaction->amount_refunded, 2))
     		throw new InvalidAmountException("Invalid amount: ".$amount
     				.". Amount refunded must be greater than 0 and smaller than or equal to "
     				.($transaction->amount - $transaction->amount_refunded)

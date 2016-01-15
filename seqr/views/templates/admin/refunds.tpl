@@ -55,6 +55,8 @@
             <div>Shipping cost</div>
             <div>Returned</div>
             <div>Return value</div>
+            <div>Action</div>
+
         </div>
         {foreach $seqrPayments as $row}
             <form method="post" id="{$row['id_order']}_form" action="{$link->getAdminLink('SeqrRefunds',true)|escape:'html':'UTF-8'}">
@@ -67,12 +69,15 @@
                 <div id="{$row['id_order']}_shipping">{convertPrice price=$row['shipping_cost']}</div>
                 <div id="{$row['id_order']}_returned">{convertPrice price=$row['returned']}</div>
                 <div>
-                    {*<input class="button btn btn-default button-medium" type="submit" value="Refund"/>*}
                     {if $row['total_paid'] - $row['returned'] == 0}
                     	Fully refunded
                     {else}
                     	<input id="{$row['id_order']}_to_return" name="return" type="number" step="0.01" min="0"
                            max="{$row['total_paid'] - $row['returned']}" value="{$row['suggested_return']}"/>
+                    {/if}
+                </div>
+                <div>
+                    {if $row['total_paid'] - $row['returned'] != 0}
                         <input class="button btn btn-default button-medium" type="button" value="Refund" onclick="window.refund.selectRefund({$row['id_order']})" />
                     {/if}
                 </div>

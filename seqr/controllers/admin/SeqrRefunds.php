@@ -41,7 +41,7 @@ class SeqrRefundsController extends ModuleAdminController {
  			$link = $this->context->link;
  			foreach ($results as &$row) {
  				$row["order_link"] = $link->getAdminLink('AdminOrders').'&vieworder&id_order='.$row["id_order"];
- 				$suggested = $row['total_paid'] - $row['shipping_cost'] - $row['returned'];
+ 				$suggested = round($row['total_paid'] - $row['shipping_cost'] - $row['returned'], 2);
  				$row["suggested_return"] = $suggested > 0 ? $suggested : 0;
  			}
  		}
