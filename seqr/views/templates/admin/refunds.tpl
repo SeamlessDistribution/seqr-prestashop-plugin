@@ -1,3 +1,5 @@
+{extends file="helpers/view/view.tpl"}
+{block name="override_tpl"}
 <style type="text/css">
     {literal}
     .table {
@@ -31,7 +33,10 @@
 
         selectRefund: function(orderId) {
             this.orderId = orderId;
-            $("#refund-confirmation").trigger("beforeShow");
+            var amount = $('#' + this.orderId + '_to_return').val();
+            if(confirm("Do you want to return " + amount + " to the customer?")) {
+                this.submitRefund();
+            }
         }
     };
 </script>
@@ -68,14 +73,11 @@
                     {else}
                     	<input id="{$row['id_order']}_to_return" name="return" type="number" step="0.01" min="0"
                            max="{$row['total_paid'] - $row['returned']}" value="{$row['suggested_return']}"/>
-                    	<a id="{$row['id_order']}_refund_btn" class="btn btn-primary" style="margin-left: 10px;" href="#" data-target="#refundConfirmation"
-                       data-toggle="modal" data-link="" data-module-display-name="SEQR" data-module-name="seqr"
-                       data-module-image="/modules/seqr/logo.png" data-author-name="SEQR Team" data-author-uri="" onclick="window.refund.selectRefund({$row['id_order']})">
-                        Refund
-                    	</a>
+                        <input class="button btn btn-default button-medium" type="button" value="Refund" onclick="window.refund.selectRefund({$row['id_order']})" />
                     {/if}
                 </div>
             </form>
         {/foreach}
     </div>
 </div>
+{/block}
