@@ -7,7 +7,7 @@
 interface SeqrConfig {
 
     const SEQR_WSDL = 'SEQR_WSDL';
-    const SEQR_WSDL_DEMO = 'https://extdev.seqr.com/extclientproxy/service/v2?wsdl';
+    const SEQR_WSDL_TEST = 'https://extdev.seqr.com/extclientproxy/service/v2?wsdl';
     const SEQR_USER_ID = 'SEQR_USER_ID';
     const SEQR_TERMINAL_ID = 'SEQR_TERMINAL_ID';
     const SEQR_TERMINAL_PASS = 'SEQR_TERMINAL_PASS';
@@ -57,13 +57,6 @@ interface SeqrConfig {
      * @return mixed
      */
     public function isValid();
-
-    /**
-     * Checks if module is in demo mode.
-     * If the DEMO server is used.
-     * @return mixed
-     */
-    public function isDemoMode();
 
     /**
      * Gets user id from configuration.

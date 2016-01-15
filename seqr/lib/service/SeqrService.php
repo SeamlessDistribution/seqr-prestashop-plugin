@@ -167,10 +167,7 @@ abstract class SeqrService {
      */
     public function getSeqrUrl() {
 
-        return preg_replace('/^HTTP\:\/\//',
-            $this->config->isDemoMode() ? 'SEQR-DEMO://' : 'SEQR://',
-            $this->getQrCode()
-        );
+        return preg_replace('/^HTTP\:\/\//', 'SEQR://', $this->getQrCode());
     }
 
     /**
@@ -179,7 +176,7 @@ abstract class SeqrService {
      */
     public function getWebPluginUrl() {
         return 'https://cdn.seqr.com/webshop-plugin/js/seqrShop.js' .
-        '#!' . ($this->config->isDemoMode() ? 'mode=demo' : '') .
+        '#!' .
         '&injectCSS=true&statusCallback=seqrStatusUpdated&' .
         'invoiceQRCode=' . $this->getQrCode() . '&' .
         'statusURL=' . $this->getCheckStatusUrl();

@@ -45,7 +45,7 @@ final class PsConfig extends SeqrCoreConfig
 
     public function install()
     {
-        return Configuration::updateValue(SeqrConfig::SEQR_WSDL, SeqrConfig::SEQR_WSDL_DEMO)
+        return Configuration::updateValue(SeqrConfig::SEQR_WSDL, SeqrConfig::SEQR_WSDL_TEST)
         && Configuration::updateValue(SeqrConfig::SEQR_PAYMENT_TIMEOUT, 120) && $this->installDatabase();
     }
 

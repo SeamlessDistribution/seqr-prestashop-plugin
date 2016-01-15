@@ -32,10 +32,6 @@ abstract class SeqrCoreConfig implements SeqrConfig {
             && !empty($this->wsdl);
     }
 
-    public function isDemoMode() {
-        return trim($this->wsdl) === trim(SeqrConfig::SEQR_WSDL_DEMO);
-    }
-
     public function getUserId() {
         return $this->userId;
     }
