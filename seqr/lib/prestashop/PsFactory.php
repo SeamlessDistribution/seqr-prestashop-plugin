@@ -33,7 +33,7 @@ class PsFactory extends SeqrInvoiceFactory {
         }
     }
 
-    protected function createItem($orderItem, SeqrItem &$seqrItem) {
+    protected function createItem($orderItem, SeqrInvoiceItem &$seqrItem) {
 
         if(isset($orderItem) && isset($seqrItem)) {
 

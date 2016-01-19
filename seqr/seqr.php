@@ -16,11 +16,10 @@ final class Seqr extends PaymentModule {
 
         $this->name = "seqr";
         $this->tab = "payments_gateways";
-        $this->version = "1.2.2";
+        $this->version = "1.3.0";
         $this->author = "SEQR Team";
         $this->need_instance = 1;
         $this->is_configurable = 1;
-        $this->ps_versions_compliancy = array("min" => "1.5", "max" => _PS_VERSION_);
         $this->bootstrap = true;
 
         parent::__construct();
@@ -44,6 +43,7 @@ final class Seqr extends PaymentModule {
             || !$this->registerHook("payment")
             || !$this->registerHook("header")
             || !$this->config->install()
+        	|| !$this->installModuleMenu('SeqrRefunds', array(1=>'SEQR Refunds'))
         ) {
             return false;
         }
@@ -56,7 +56,8 @@ final class Seqr extends PaymentModule {
      */
     public function uninstall() {
         if (
-            !$this->config->uninstall()
+        	!$this->removeModuleTab('SeqrRefunds')
+            || !$this->config->uninstall()
             || !parent::uninstall()
         ) {
             return false;
@@ -290,6 +291,34 @@ final class Seqr extends PaymentModule {
         return intval(substr($version, 0, 1) . substr($version, 2, 1));
     }
 
+    private function installModuleTab($tabClass, $tabName, $parentId)
+    {
+    	$tab = new Tab();
+    	$tab->name = $tabName;
+    	$tab->class_name = $tabClass;
+    	$tab->module = $this->name;
+    	$tab->id_parent = $parentId;
+    	$tab->active = 1;
+    	if(!$tab->save())
+    		return false;
+    	return true;
+    }
+
+    private function installModuleMenu($tabClass, $tabName)
+    {
+    	if (!$this->installModuleTab($tabClass.'Parent', $tabName, 0))
+    		return false;
+    	$tab = new Tab((int)Tab::getIdFromClassName($tabClass.'Parent'));
+    	return $this->installModuleTab($tabClass, $tabName, $tab->id);
+    }
+    
+    private function removeModuleTab($tabClass) {
+    	$tab = new Tab((int)Tab::getIdFromClassName($tabClass));
+    	if($tab)
+    		$tab->delete();
+    	return true;
+    }
+    
     /**
      * Validates module settings.
      */

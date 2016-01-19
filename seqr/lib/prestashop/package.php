@@ -4,5 +4,6 @@ require_once($_seqr_dir . '/PsConfig.php');
 require_once($_seqr_dir . '/PsFactory.php');
 require_once($_seqr_dir . '/PsSeqrService.php');
 require_once($_seqr_dir . '/PsSeqrFrontController.php');
+require_once($_seqr_dir . '/SeqrTransaction.php');
 
 

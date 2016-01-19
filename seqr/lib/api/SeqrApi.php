@@ -48,6 +48,27 @@ final class SeqrApi {
         }
     }
 
+    public function refundPayment($ersReference, $amount, $currencyCode) {
+    
+    	try {
+    		$SOAP = $this->SOAP();
+    		$invoice = $this->createRefundInvoice($amount, $currencyCode);
+
+    		$result = $SOAP->refundPayment(array(
+    				'context' => $this->getRequestContext(),
+    				'ersReference' => $ersReference,
+    				'invoice' => $invoice
+    		))->return;
+    
+    		if ($result->resultCode != 0) throw new Exception($result->resultCode . " : " . $result->resultDescription);
+    
+    		return $result;
+    	} catch(Exception $e) {
+    		PrestaShopLogger::addLog($e->getMessage());
+    		throw new Exception("SEQR API - Refund payment error");
+    	}
+    }
+    
     public function getRequestContext() {
 
         return array(
@@ -57,7 +78,9 @@ final class SeqrApi {
                 'userId' => $this->config->getUserId()
             ),
             'password' => $this->config->getTerminalPass(),
-            'clientRequestTimeout' => '0'
+            'clientRequestTimeout' => '0',
+        	'channel' => 'WS',
+        	'clientId' => 'Prestashop plugin'
         );
     }
 
@@ -154,7 +177,7 @@ final class SeqrApi {
         return $invoice;
     }
 
-    private function createRow(SeqrItem $item, $currencyCode, $unitType) {
+    private function createRow(SeqrInvoiceItem $item, $currencyCode, $unitType) {
         return array(
             'itemDescription' => $item->getName(),
             'itemSKU' => $item->getSku(),
@@ -170,6 +193,18 @@ final class SeqrApi {
                 'value' => $this->toFloat($item->getTotalPriceInclTax())
             )
         );
+    }
+    
+    private function createRefundInvoice($amount, $currencyCode) {
+
+    	return array(
+	            'title' => "SEQR refund",
+	            'totalAmount' => array(
+	                'currency' => $currencyCode,
+	                'value' => $this->toFloat($amount)
+	            ),
+        		'cashierId' => 'WEB'
+    	);
     }
 
     /**

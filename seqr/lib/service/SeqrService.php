@@ -2,6 +2,7 @@
 
 include_once(dirname(__FILE__) . "/../api/SeqrApi.php");
 include_once(dirname(__FILE__) . "/../model/SeqrInvoiceFactory.php");
+include_once(dirname(__FILE__) . "/../model/InvalidAmountException.php");
 include_once(dirname(__FILE__) . "/../config/SeqrConfig.php");
 
 /**
@@ -57,6 +58,33 @@ abstract class SeqrService {
         return $result;
     }
 
+    /**
+     * Refunds a previous payment, either part of it or the whole sum.
+     * @param amount
+     */
+    public function refundPayment($amount) {
+    	$this->throwExceptionIfNotLoaded();
+
+    	$transaction = $this->getSeqrTransaction();
+        if ($amount == null || $amount == 0 || round($amount,2) > round($transaction->amount - $transaction->amount_refunded, 2))
+    		throw new InvalidAmountException("Invalid amount: ".$amount
+    				.". Amount refunded must be greater than 0 and smaller than or equal to "
+    				.($transaction->amount - $transaction->amount_refunded)
+    				." for order id = ".$this->order->getId());
+
+    	$currencyCode = $this->order->getOrderCurrencyCode();
+    	$ersReference = $transaction->ers_reference;
+    	$result = $this->api->refundPayment($ersReference, $amount, $currencyCode);
+
+    	if ($result->resultCode == "0") {
+    		$transaction->amount_refunded += $amount;
+    		$transaction->refund = 1;
+    		$transaction->save();
+    	}
+    	
+    	return $result;
+    }
+    
     /**
      * Gets last response received from the SEQR system.
      * @return mixed
@@ -139,10 +167,7 @@ abstract class SeqrService {
      */
     public function getSeqrUrl() {
 
-        return preg_replace('/^HTTP\:\/\//',
-            $this->config->isDemoMode() ? 'SEQR-DEMO://' : 'SEQR://',
-            $this->getQrCode()
-        );
+        return preg_replace('/^HTTP\:\/\//', 'SEQR://', $this->getQrCode());
     }
 
     /**
@@ -151,7 +176,7 @@ abstract class SeqrService {
      */
     public function getWebPluginUrl() {
         return 'https://cdn.seqr.com/webshop-plugin/js/seqrShop.js' .
-        '#!' . ($this->config->isDemoMode() ? 'mode=demo' : '') .
+        '#!' .
         '&injectCSS=true&statusCallback=seqrStatusUpdated&' .
         'invoiceQRCode=' . $this->getQrCode() . '&' .
         'statusURL=' . $this->getCheckStatusUrl();
@@ -175,6 +200,8 @@ abstract class SeqrService {
      * @return mixed
      */
     abstract protected function getSeqrData();
+    
+    abstract protected function getSeqrTransaction();
 
     /**
      * Throws exception when the application specific order was not provided.
@@ -223,6 +250,7 @@ class SeqrData {
             if (isset($json->ver)) $this->ver = $json->ver;
             if (isset($json->qr)) $this->qr = $json->qr;
             if (isset($json->time)) $this->time = $json->time;
+            if (isset($json->ersRef)) $this->ersRef = $json->ersRef;
         }
     }
 
@@ -237,6 +265,8 @@ class SeqrData {
             if (isset($rawData->version)) $this->ver = $rawData->version;
             if (isset($rawData->invoiceQRCode)) $this->qr = $rawData->invoiceQRCode;
             if (isset($rawData->invoiceReference)) $this->ref = $rawData->invoiceReference;
+            if (isset($rawData->ersReference)) $this->ersRef = $rawData->ersReference;
+
         }
         return $this;
     }
@@ -251,7 +281,8 @@ class SeqrData {
             "status" => $this->emptyIfNull($this->status),
             "ver" => $this->emptyIfNull($this->ver),
             "qr" => $this->emptyIfNull($this->qr),
-            "time" =>$this->emptyIfNull($this->time)
+            "time" =>$this->emptyIfNull($this->time),
+            "ersRef" =>$this->emptyIfNull($this->ersRef)
         );
     }
 
@@ -260,6 +291,7 @@ class SeqrData {
     }
 
     public $ref = null;
+    public $ersRef = null;
     public $status = null;
     public $ver = null;
     public $qr = null;

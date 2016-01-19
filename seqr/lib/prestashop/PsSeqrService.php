@@ -19,21 +19,51 @@ class PsSeqrService extends SeqrService {
         $payment = $this->getPaymentObject();
 
         if (isset($payment) && isset($data)) {
-            $payment->transaction_id = Tools::jsonEncode($data->toJson());
-            $payment->save();
+
+            $transaction = new SeqrTransaction($payment->transaction_id);
+
+            $transaction->amount = $payment->amount;
+            $transaction->ers_reference = $data->ersRef;
+            $transaction->id_seqr = $data->ref;
+            $transaction->time =(int)$data->time;
+            $transaction->status = $data->status;
+            $transaction->id_payment = $payment->id;
+            $transaction->id_order = $this->getOrderId();
+            $transaction->qr_code = $data->qr;
+
+            if (ValidateCore::isLoadedObject($transaction)) {
+                $transaction->save();
+            } else {
+                $transaction->add();
+                $payment->transaction_id = $transaction->id;
+                $payment->save();
+            }
         }
     }
 
     protected function getSeqrData() {
 
         $payment = $this->getPaymentObject();
+        $transaction = new SeqrTransaction($payment->transaction_id);
 
-        if($this->loaded && $payment) {
-            return new SeqrData(Tools::jsonDecode($payment->transaction_id));
+        if($this->loaded && $payment && Validate::isLoadedObject($transaction)) {
+            $data = new SeqrData();
+            $data->qr = $transaction->qr_code;
+            $data->ref = $transaction->id_seqr;
+            $data->status = $transaction->status;
+            $data->time = $transaction->time;
+
+            return $data;
         }
         return null;
     }
 
+    protected function getSeqrTransaction() {
+    	$payment = $this->getPaymentObject();
+    	$transaction = new SeqrTransaction($payment->transaction_id);
+    	return $transaction;
+    }
+    
     private function getPaymentObject() {
 
         $this->throwExceptionIfNotLoaded();

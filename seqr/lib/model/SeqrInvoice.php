@@ -180,7 +180,7 @@ class SeqrInvoice {
     }
 }
 
-class SeqrItem {
+class SeqrInvoiceItem {
 
     private $name = null;
     private $sku = null;
