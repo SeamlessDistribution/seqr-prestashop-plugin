@@ -1,5 +1,3 @@
-{extends file="helpers/view/view.tpl"}
-{block name="override_tpl"}
 <style type="text/css">
     {literal}
     .table {
@@ -85,4 +83,3 @@
         {/foreach}
     </div>
 </div>
-{/block}
