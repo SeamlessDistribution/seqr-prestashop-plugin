@@ -13,6 +13,7 @@
     <h2>{l s="Total amount: "} {$total} {$currency->iso_code}</h2>
 </div>
 <div class="seqr-box">
+    <div id="seqrQRCode"></div>
     <script id="seqrShop" src="{$webPluginUrl}" type="text/javascript"></script>
 </div>
 
