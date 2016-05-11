@@ -175,7 +175,7 @@ abstract class SeqrService {
      * @return string
      */
     public function getWebPluginUrl() {
-        return 'https://cdn.seqr.com/webshop-plugin/js/seqrShop.js' .
+        return 'https://cdn.seqr.com/webshop-plugin/js/seqrShop2.js' .
         '#!' .
         '&injectCSS=true&statusCallback=seqrStatusUpdated&' .
         'invoiceQRCode=' . $this->getQrCode() . '&' .
