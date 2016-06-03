@@ -43,7 +43,7 @@ final class Seqr extends PaymentModule {
             || !$this->registerHook("payment")
             || !$this->registerHook("header")
             || !$this->config->install()
-        	|| !$this->installModuleMenu('SeqrRefunds', array(1=>'SEQR Refunds'))
+            || !$this->installModuleMenu('SeqrRefunds', 'SEQR Refunds')
         ) {
             return false;
         }
@@ -56,7 +56,8 @@ final class Seqr extends PaymentModule {
      */
     public function uninstall() {
         if (
-        	!$this->removeModuleTab('SeqrRefunds')
+            !$this->removeModuleTab('SeqrRefunds')
+            || !$this->removeModuleTab('SeqrRefundsParent')
             || !$this->config->uninstall()
             || !parent::uninstall()
         ) {
@@ -294,7 +295,9 @@ final class Seqr extends PaymentModule {
     private function installModuleTab($tabClass, $tabName, $parentId)
     {
     	$tab = new Tab();
-    	$tab->name = $tabName;
+	foreach(Language::getLanguages(true) as $lang){
+                $tab->name[(int) $lang['id_lang']] = $tabName;
+        }
     	$tab->class_name = $tabClass;
     	$tab->module = $this->name;
     	$tab->id_parent = $parentId;
